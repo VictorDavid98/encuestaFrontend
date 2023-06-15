@@ -1,13 +1,17 @@
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
+import { AuthProvider } from "./context/authContext";
 
 
 
 function App() {
   return (
-    <div className="App">
-      <Login></Login>
-    </div>
+    <AuthProvider>
+
+      <Register></Register>
+
+    </AuthProvider>
+    
   );
 }
 

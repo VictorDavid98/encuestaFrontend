@@ -5,10 +5,11 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Spinner from "react-bootstrap/Spinner";
-import alert from 'react-bootstrap/alert'
+import alert from "react-bootstrap/alert";
 import { useState } from "react";
 import { loginUser } from "../Services/UserService";
 import { Alert } from "react-bootstrap";
+import { useAuthDispatch, useAuthState } from "../context/authContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,17 +17,25 @@ const Login = () => {
   const [error, setError] = useState("");
   const [sendingData, setSendingData] = useState(false);
 
+  const authDispatch = useAuthDispatch();
+
+
   const login = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
       setSendingData(true);
-        const res = await loginUser(email, password);
-        const token = res.data.token
-      setSendingData(false);
+      setError("");
+      const res = await loginUser(email, password);
+      const token = res.data.token;
+      authDispatch({
+        type: "login",
+        token,
+      });
+    
     } catch (errors: any) {
-        if(errors.response){
-            errors.response.status === 403 && setError("Credenciales Incorrectas")
-        }
+      if (errors.response) {
+        errors.response.status === 403 && setError("Credenciales Incorrectas");
+      }
       setSendingData(false);
     }
   };
@@ -77,7 +86,9 @@ const Login = () => {
                   )}
                 </Button>
               </Form>
-              <Alert className="mt-3" show={!!error} variant="danger">{error}</Alert>
+              <Alert className="mt-3" show={!!error} variant="danger">
+                {error}
+              </Alert>
             </Card.Body>
           </Card>
         </Col>
